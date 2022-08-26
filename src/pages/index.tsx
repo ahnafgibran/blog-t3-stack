@@ -11,6 +11,7 @@ type TechnologyCardProps = {
 const Home: NextPage = () => {
   const {data, error, isLoading} = trpc.useQuery(["hello"]);
 
+
   return (
     <>
       <Head>
