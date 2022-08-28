@@ -7,7 +7,7 @@ export const createUserSchema = z.object({
 
 export const createUserOutputSchema = z.object({
   name: z.string(),
-  email: z.string().email(),
+  email: z.string().email({ message: 'Must be a valid email'}),
 })
 
 export type CreateUserInput = z.TypeOf<typeof createUserSchema>
