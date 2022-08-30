@@ -13,6 +13,7 @@ interface CtxUser {
 function getUserFromRequest(req: NextApiRequest) {
   const token = req.cookies.token
 
+
   if (token) {
     try {
       const verified = verifyJwt<CtxUser>(token)

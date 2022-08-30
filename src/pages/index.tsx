@@ -1,6 +1,18 @@
 import type { NextPage } from "next";
 import Head from "next/head";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { useUserContext } from "../context/user.context";
 import { trpc } from "../utils/trpc";
+
+interface CtxUser {
+  id: string
+  email: string
+  name: string
+  iat: string
+  exp: number
+}
 
 type TechnologyCardProps = {
   name: string;
@@ -9,14 +21,14 @@ type TechnologyCardProps = {
 };
 
 const Home: NextPage = () => {
-  const { data, error, isLoading } = trpc.useQuery(["users.me"]);
+  const { data, error, isLoading } = trpc.useQuery(['users.me'])
+  const user = useUserContext()
+  const router = useRouter()
 
-  if (isLoading) {
-    return <p>Loading...</p>;
-  }
 
-  if (error) {
-    return <div>{JSON.stringify(error)}</div>;
+  if (!user){
+    // router.push('/login')
+    return <p>You are not logged in, please log in</p>
   }
 
   return (
@@ -28,7 +40,9 @@ const Home: NextPage = () => {
       </Head>
 
       <main className="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
-        {JSON.stringify(data)}
+        <div>
+          <Link href='/posts/new'>Create post</Link>
+        </div>
       </main>
     </>
   );

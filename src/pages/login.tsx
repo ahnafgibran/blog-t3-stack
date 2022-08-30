@@ -6,53 +6,54 @@ import { CreateUserInput } from "../schema/user.schema";
 import { trpc } from "../utils/trpc";
 
 function VerifyToken({ hash }: { hash: string }) {
-  const router = useRouter()
+  const router = useRouter();
   const { data, isLoading } = trpc.useQuery([
-    'users.verify-otp',
+    "users.verify-otp",
     {
       hash,
     },
-  ])
+  ]);
 
   if (isLoading) {
-    return <p>Verifying...</p>
+    return <p>Verifying...</p>;
   }
 
-  // router.push(data?.redirect.includes('login') ? '/' : data?.redirect || '/')
-  
-  return <p>Redirecting...</p>
+  if (data) {
+    router
+      .push(data?.redirect.includes("login") ? "/" : data?.redirect || "/")
+      .then(() => router.reload());
+  }
+
+  return <></>;
 }
 
 function LoginPage() {
   const { handleSubmit, register } = useForm<CreateUserInput>();
-  const [success, setSuccess] = useState(false)
-  const [error, setError] = useState<any>(null)
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<any>(null);
   const router = useRouter();
-
 
   const { mutate } = trpc.useMutation(["users.request-otp"], {
     onSuccess: () => {
-      setSuccess(true)
+      setSuccess(true);
     },
     onError(err) {
-      setError(err?.data?.code)
+      setError(err?.data?.code);
       setTimeout(() => {
-        setError('')
-      }, 5000)
+        setError("");
+      }, 5000);
     },
   });
 
   const onSubmit = (values: CreateUserInput) => {
-    mutate({...values, redirect: router.asPath});
+    mutate({ ...values, redirect: router.asPath });
   };
 
-  const hash = router.asPath.split('#token=')[1]
+  const hash = router.asPath.split("#token=")[1];
 
   if (hash) {
-    return <VerifyToken hash={hash} />
+    return <VerifyToken hash={hash} />;
   }
-
-  // console.log('error', error?.message)
 
   return (
     <div className="w-full h-full min-h-screen">
